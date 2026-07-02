@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/PRESENTATION/">
+    <Project Path="PRESENTATION/NoahOnlineLibrary.ConsoleApp/NoahOnlineLibrary.ConsoleApp.csproj" />
+  </Folder>
+  <Folder Name="/SRC/" />
+  <Folder Name="/SRC/Core/">
+    <Project Path="SRC/Core/NoahOnlineLibrary.Application/NoahOnlineLibrary.Application.csproj" />
+    <Project Path="SRC/Core/NoahOnlineLibrary.Domain/NoahOnlineLibrary.Domain.csproj" />
+  </Folder>
+  <Folder Name="/SRC/Infrastructure/">
+    <Project Path="SRC/Infrastructure/NoahOnlineLibrary.Persistence/NoahOnlineLibrary.Persistence.csproj" />
+  </Folder>
+</Solution>
