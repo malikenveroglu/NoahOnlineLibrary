@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NoahOnlineLibrary.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace NoahOnlineLibrary.Domain.Entities
         public int PageCount { get; set; }
         public int AuthorId { get; set; }
         public Author Author { get; set; }
+        public Status ReservationStatus { get; set; }
         public List<ReservedItem>? ReservedItems { get; set; }
     }
 }

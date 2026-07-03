@@ -16,5 +16,25 @@ namespace NoahOnlineLibrary.Application.Services
         {
             _reservedItemRepository = reservedItemRepository;
         }
+
+        public void ChangeReservationStatus()
+        {
+            
+        }
+
+        public void ReservationList()
+        {
+            
+        }
+
+        public void ReserveBook()
+        {
+            
+        }
+
+        public void UsersReservationList()
+        {
+            
+        }
     }
 }

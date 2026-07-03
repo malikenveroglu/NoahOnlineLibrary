@@ -8,5 +8,8 @@ namespace NoahOnlineLibrary.Application.Interfaces.IServices
 {
     public interface IAuthorService
     {
+        void CreateAuthor();
+        void ShowAllAuthors();
+        void ShowAuthorsBooks(int authorId);
     }
 }

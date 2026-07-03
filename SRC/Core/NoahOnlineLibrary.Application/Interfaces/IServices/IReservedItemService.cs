@@ -8,5 +8,9 @@ namespace NoahOnlineLibrary.Application.Interfaces.IServices
 {
     public interface IReservedItemService
     {
+        void ReserveBook();
+        void ReservationList();
+        void ChangeReservationStatus();
+        void UsersReservationList();
     }
 }

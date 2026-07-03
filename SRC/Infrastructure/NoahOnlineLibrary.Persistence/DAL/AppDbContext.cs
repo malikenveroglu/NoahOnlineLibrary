@@ -10,6 +10,15 @@ namespace NoahOnlineLibrary.Persistence.DAL
 {
     public class AppDbContext: DbContext
     {
+        public AppDbContext(AppDbContext? context)
+        {
+            Context = context;
+        }
+
+        public AppDbContext()
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -18,5 +27,6 @@ namespace NoahOnlineLibrary.Persistence.DAL
         public DbSet<Book> Books { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<ReservedItem> ReservedItems { get; set; }
+        public AppDbContext? Context { get; }
     }
 }

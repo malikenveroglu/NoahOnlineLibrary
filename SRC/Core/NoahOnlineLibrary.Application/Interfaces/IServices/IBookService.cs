@@ -8,5 +8,8 @@ namespace NoahOnlineLibrary.Application.Interfaces.IServices
 {
     public interface IBookService
     {
+        void CreateBook();
+        void DeleteBook();
+        void GetBookById();
     }
 }
