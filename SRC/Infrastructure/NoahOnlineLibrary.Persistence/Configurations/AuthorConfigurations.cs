@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NoahOnlineLibrary.Domain.Entities;
+using NoahOnlineLibrary.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,26 @@ namespace NoahOnlineLibrary.Persistence.Configurations
         {
             builder.Property(a => a.Name)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasColumnType("nvarchar(100)");
 
             builder.Property(a => a.Surname)
-                   .HasMaxLength(50);
+                   .HasColumnType("nvarchar(100)")
+                   .HasDefaultValue(":)");
 
             builder.Property(a => a.Gender)
-                   .IsRequired();
+                   .HasDefaultValue(Gender.Unknown);
 
             builder.HasMany(a => a.Books)
                    .WithOne(b => b.Author)
-                   .HasForeignKey(b => b.AuthorId);
+                   .HasForeignKey(b => b.AuthorId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.ToTable(a =>
+            {
+                a.HasCheckConstraint(
+                    "CK_Author_Gender",
+                    "[Gender] IN (1,2,3,4)");
+            });
         }
     }
 }

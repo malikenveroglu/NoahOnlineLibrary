@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NoahOnlineLibrary.Domain.Entities;
+using NoahOnlineLibrary.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +16,19 @@ namespace NoahOnlineLibrary.Persistence.Cofigurations
         {
             builder.Property(r => r.FinCode)
                    .IsRequired()
-                   .HasMaxLength(7);
+                   .HasColumnType("CHAR(7)");
 
             builder.Property(r => r.StartDate)
-                   .IsRequired();
+                   .IsRequired()
+                   .HasColumnType("Date");
 
             builder.Property(r => r.EndDate)
-                   .IsRequired();
+                   .IsRequired()
+                   .HasColumnType("Date");
 
             builder.Property(r => r.Status)
-                   .IsRequired();
+                   .IsRequired()
+                   .HasDefaultValue(Status.Confirmed);
 
             builder.HasIndex(r => r.FinCode);
 

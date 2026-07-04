@@ -154,8 +154,7 @@ namespace NoahOnlineLibrary.Application.Services
                 {
                     Name = name,
                     PageCount = pageCount,
-                    AuthorId = authorId,
-                    ReservationStatus = Status.Available
+                    AuthorId = authorId
                 };
 
                 _bookRepository.Add(book);
@@ -284,20 +283,6 @@ namespace NoahOnlineLibrary.Application.Services
 
                 var selectedBook = books.First(b => b.Id == bookId);
 
-                if (selectedBook.ReservationStatus == Status.Started)
-                {
-                    Console.Clear();
-
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nLibrary Error: This Book Is Currently Being Used By A User.\nIt Can Be Deleted After It Is Returned.");
-                    Console.ResetColor();
-                    Console.WriteLine();
-                    Console.WriteLine("\nPress Any Key To Try Again...");
-                    Console.ReadKey();
-
-                    continue;
-                }
-
                 while (true)
                 {
                     Console.Clear();
@@ -340,7 +325,6 @@ namespace NoahOnlineLibrary.Application.Services
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\nLibrary Error: Invalid Choice.");
                             Console.ResetColor();
-
                             Console.WriteLine("\nPress Any Key To Try Again...");
                             Console.ReadKey();
                             continue;
@@ -444,7 +428,6 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.WriteLine($"Name: {selectedBook.Name}");
                     Console.WriteLine($"Page Count: {selectedBook.PageCount}");
                     Console.WriteLine($"Author: {author?.Name} {author?.Surname}");
-                    Console.WriteLine($"Reservation Status: {selectedBook.ReservationStatus}");
 
                     Console.WriteLine();
                     Console.WriteLine("1. Search Another Book");

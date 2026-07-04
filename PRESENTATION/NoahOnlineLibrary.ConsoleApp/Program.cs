@@ -14,12 +14,14 @@ namespace NoahOnlineLibrary.ConsoleApp
 
             var authorRepo = new AuthorRepository(context);
             var bookRepo = new BookRepository(context);
+            var reservRepo = new ReservedItemRepository(context);
 
             var bookService = new BookService(bookRepo, authorRepo);
             var authorService = new AuthorService(authorRepo, bookRepo);
+            var reservedItemService = new ReservedItemService(reservRepo, bookRepo,authorRepo);
 
-            authorService.ShowAllAuthors();
-
+            //authorService.ShowAllAuthors();
+            reservedItemService.ReserveBook();
             //bookService.GetBookById();
             
         }

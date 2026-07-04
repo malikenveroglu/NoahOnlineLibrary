@@ -453,7 +453,6 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.WriteLine($"ID: {book.Id}");
                     Console.WriteLine($"Name: {book.Name}");
                     Console.WriteLine($"Page Count: {book.PageCount}");
-                    Console.WriteLine($"Page Count: {book.ReservationStatus}");
                     Console.WriteLine("-----------------------------------------");
                 }
             }

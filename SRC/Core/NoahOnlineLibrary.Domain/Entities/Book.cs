@@ -12,8 +12,7 @@ namespace NoahOnlineLibrary.Domain.Entities
         public string Name { get; set; }
         public int PageCount { get; set; }
         public int AuthorId { get; set; }
-        public Author Author { get; set; }
-        public Status ReservationStatus { get; set; }
+        public Author? Author { get; set; }
         public List<ReservedItem>? ReservedItems { get; set; }
     }
 }

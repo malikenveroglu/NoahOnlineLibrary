@@ -16,28 +16,29 @@ namespace NoahOnlineLibrary.Persistence.Cofigurations
         {
             builder.Property(b => b.Name)
                    .IsRequired()
-                   .HasMaxLength(100);
+                   .HasColumnType("NVARCHAR(100)");
 
             builder.Property(b => b.PageCount)
                    .IsRequired();
+
+            builder.HasOne(b => b.Author)
+                   .WithMany(a => a.Books)
+                   .HasForeignKey(b => b.AuthorId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasMany(b => b.ReservedItems)
                    .WithOne(r => r.Book)
                    .HasForeignKey(r => r.BookId);
 
-            builder.Property(b => b.ReservationStatus)
-                   .HasDefaultValue(Status.Available);
-
             builder.ToTable(b =>
             {
                 b.HasCheckConstraint(
                     "CK_Book_ReservationStatus",
-                    "ReservationStatus IN (1,2,3,4,5)");
-            });
+                    "[ReservationStatus] IN (1,2,3,4,5)");
 
-            builder.ToTable(b =>
-            {
-                b.HasCheckConstraint("CK_Book_PageCount", "PageCount > 0");
+                b.HasCheckConstraint(
+                    "CK_Book_PageCount",
+                    "[PageCount] >= 0");
             });
         }
     }
