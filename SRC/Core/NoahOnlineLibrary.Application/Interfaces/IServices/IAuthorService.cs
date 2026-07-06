@@ -9,7 +9,9 @@ namespace NoahOnlineLibrary.Application.Interfaces.IServices
     public interface IAuthorService
     {
         void CreateAuthor();
+        void DeleteAuthor();
         void ShowAllAuthors();
-        void ShowAuthorsBooks(int authorId);
+        public void ShowAuthorsBooks(int authorId);
+        void ShowAuthorsBooks();
     }
 }

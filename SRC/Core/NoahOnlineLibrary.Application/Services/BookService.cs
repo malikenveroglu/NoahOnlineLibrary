@@ -14,12 +14,14 @@ namespace NoahOnlineLibrary.Application.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IAuthorRepository _authorRepository;
+        private readonly IReservedItemRepository _reservedItemRepository;
 
 
-        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository)
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, IReservedItemRepository reservedItemRepository)
         {
           _bookRepository = bookRepository;  
           _authorRepository = authorRepository;
+          _reservedItemRepository = reservedItemRepository;
         }
 
         public void CreateBook()
@@ -214,11 +216,12 @@ namespace NoahOnlineLibrary.Application.Services
                 Console.Clear();
 
                 var books = _bookRepository.GetAll();
+                var authors = _authorRepository.GetAll();
 
                 if (books.Count == 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("No books found in library.");
+                    Console.WriteLine("\nNo books found in library.");
                     Console.ResetColor();
 
                     Console.WriteLine("\nPress any key to return to menu...");
@@ -232,16 +235,36 @@ namespace NoahOnlineLibrary.Application.Services
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("=== DELETE BOOK ===");
-                    Console.WriteLine("Select Book To Delete / Press 'M' To Back To Menu:");
+                    Console.WriteLine("\nSelect Book To Delete / Press 'M' To Back To Menu:");
                     Console.ResetColor();
-                    Console.WriteLine(" ");
 
-                    foreach (var b in books)
+                    Console.WriteLine();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("===============================================================================");
+                    Console.WriteLine($"{"ID",-5}{"Book Name",-35}{"Pages",-10}{"Author"}");
+                    Console.WriteLine("===============================================================================");
+                    Console.ResetColor();
+
+                    foreach (var _book in books)
                     {
-                        Console.WriteLine($"{b.Id}. {b.Name}");
+                        var author = authors.FirstOrDefault(a => a.Id == _book.AuthorId);
+
+                        Console.WriteLine(
+                            $"{_book.Id,-5}" +
+                            $"{_book.Name,-35}" +
+                            $"{_book.PageCount,-10}" +
+                            $"{author?.Name ?? "Unknown"}");
+
+                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     }
 
-                    Console.Write("\nEnter Book Id: ");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("===============================================================================");
+                    Console.ResetColor();
+
+                    Console.Write("\nEnter Book Id: / Press 'M' To Back To Menu:");
+
 
                     string input = Console.ReadLine()?.Trim() ?? string.Empty;
 
@@ -283,6 +306,25 @@ namespace NoahOnlineLibrary.Application.Services
 
                 var selectedBook = books.First(b => b.Id == bookId);
 
+                bool hasActiveReservation = _reservedItemRepository
+                    .GetAll()
+                    .Any(r =>
+                        r.BookId == selectedBook.Id &&
+                        (r.Status == Status.Confirmed ||
+                         r.Status == Status.Started));
+
+                if (hasActiveReservation)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nLibrary Error:");
+                    Console.WriteLine("This Book Can Not Be Deleted Because It Has An Active Reservation.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Try Again...");
+                    Console.ReadKey();
+                    continue;
+                }
+
                 while (true)
                 {
                     Console.Clear();
@@ -290,10 +332,12 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("\nYou are about to delete this book:");
                     Console.ResetColor();
-                    Console.WriteLine(" ");
+
+                    Console.WriteLine();
                     Console.WriteLine($"ID: {selectedBook.Id}");
                     Console.WriteLine($"Name: {selectedBook.Name}");
                     Console.WriteLine($"Page Count: {selectedBook.PageCount}");
+                    Console.WriteLine($"Author: {authors.FirstOrDefault(a => a.Id == selectedBook.AuthorId)?.Name ?? "Unknown"}");
 
                     Console.WriteLine("\n1. Confirm Delete");
                     Console.WriteLine("2. Back To Menu");
@@ -325,12 +369,154 @@ namespace NoahOnlineLibrary.Application.Services
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("\nLibrary Error: Invalid Choice.");
                             Console.ResetColor();
+
                             Console.WriteLine("\nPress Any Key To Try Again...");
                             Console.ReadKey();
                             continue;
                     }
                 }
             }
+            //while (true)
+            //{
+            //    Console.Clear();
+
+            //    var books = _bookRepository.GetAll();
+
+            //    if (books.Count == 0)
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Yellow;
+            //        Console.WriteLine("\nNo books found in library.");
+            //        Console.ResetColor();
+
+            //        Console.WriteLine("\nPress any key to return to menu...");
+            //        Console.ReadKey();
+            //        return;
+            //    }
+
+            //    int bookId;
+
+            //    while (true)
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Green;
+            //        Console.WriteLine("=== DELETE BOOK ===");
+            //        Console.WriteLine("\nSelect Book To Delete / Press 'M' To Back To Menu:");
+            //        Console.ResetColor();
+            //        Console.WriteLine(" ");
+
+            //        foreach (var b in books)
+            //        {
+            //            Console.WriteLine($"{b.Id}. {b.Name}");
+            //        }
+
+            //        Console.Write("\nEnter Book Id: ");
+
+            //        string input = Console.ReadLine()?.Trim() ?? string.Empty;
+
+            //        if (input.ToLower() == "m")
+            //        {
+            //            Console.Clear();
+            //            return;
+            //        }
+
+            //        if (!int.TryParse(input, out int id))
+            //        {
+            //            Console.ForegroundColor = ConsoleColor.Red;
+            //            Console.WriteLine("\nLibrary Error: Book Id Must Be A Number.");
+            //            Console.ResetColor();
+
+            //            Console.WriteLine("\nPress Any Key To Try Again...");
+            //            Console.ReadKey();
+            //            Console.Clear();
+            //            continue;
+            //        }
+
+            //        var book = books.FirstOrDefault(b => b.Id == id);
+
+            //        if (book == null)
+            //        {
+            //            Console.ForegroundColor = ConsoleColor.Red;
+            //            Console.WriteLine("\nLibrary Error: Book Not Found.");
+            //            Console.ResetColor();
+
+            //            Console.WriteLine("\nPress Any Key To Try Again...");
+            //            Console.ReadKey();
+            //            Console.Clear();
+            //            continue;
+            //        }
+
+            //        bookId = id;
+            //        break;
+            //    }
+
+            //    var selectedBook = books.First(b => b.Id == bookId);
+
+            //    bool hasActiveReservation = _reservedItemRepository
+            //        .GetAll()
+            //        .Any(r =>
+            //         r.BookId == selectedBook.Id &&
+            //        (r.Status == Status.Confirmed ||
+            //         r.Status == Status.Started));
+
+            //    if (hasActiveReservation)
+            //    {
+            //        Console.ForegroundColor = ConsoleColor.Red;
+            //        Console.WriteLine("\nLibrary Error:");
+            //        Console.WriteLine("This Book Can Not Be Deleted Because It Has An Active Reservation.");
+            //        Console.ResetColor();
+
+            //        Console.WriteLine("\nPress Any Key To Try Again...");
+            //        Console.ReadKey();
+            //        continue;
+            //    }
+
+            //    while (true)
+            //    {
+            //        Console.Clear();
+
+            //        Console.ForegroundColor = ConsoleColor.Yellow;
+            //        Console.WriteLine("\nYou are about to delete this book:");
+            //        Console.ResetColor();
+            //        Console.WriteLine(" ");
+            //        Console.WriteLine($"ID: {selectedBook.Id}");
+            //        Console.WriteLine($"Name: {selectedBook.Name}");
+            //        Console.WriteLine($"Page Count: {selectedBook.PageCount}");
+
+            //        Console.WriteLine("\n1. Confirm Delete");
+            //        Console.WriteLine("2. Back To Menu");
+
+            //        Console.Write("\nSelect option: ");
+
+            //        string choice = Console.ReadLine()?.Trim() ?? string.Empty;
+
+            //        switch (choice)
+            //        {
+            //            case "1":
+            //                _bookRepository.Delete(selectedBook);
+            //                _bookRepository.SaveChanges();
+
+            //                Console.ForegroundColor = ConsoleColor.Green;
+            //                Console.WriteLine("\nBook successfully deleted!");
+            //                Console.ResetColor();
+
+            //                Console.WriteLine("\nPress any key to continue...");
+            //                Console.ReadKey();
+
+            //                return;
+
+            //            case "2":
+            //                Console.Clear();
+            //                return;
+
+            //            default:
+            //                Console.ForegroundColor = ConsoleColor.Red;
+            //                Console.WriteLine("\nLibrary Error: Invalid Choice.");
+            //                Console.ResetColor();
+            //                Console.WriteLine("\nPress Any Key To Try Again...");
+            //                Console.ReadKey();
+            //                continue;
+            //        }
+            //    }
+            //}
         }
 
         public void GetBookById()
@@ -362,15 +548,25 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.Clear();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("AVAILABLE BOOKS");
+                    Console.WriteLine("======AVAILABLE BOOKS======");
                     Console.ResetColor();
                     Console.WriteLine();
 
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("========================================");
+                    Console.WriteLine($"{"ID",-6}{"Book Name"}");
+                    Console.WriteLine("========================================");
+                    Console.ResetColor();
+
                     foreach (Book book in books)
                     {
-                        Console.WriteLine($"{book.Id}. {book.Name}");
+                        Console.WriteLine($"{book.Id,-6}{book.Name}");
+                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                     }
 
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("=======================================================");
+                    Console.ResetColor();
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("\nType Book Id / Press 'M' To Back To Menu:");
                     Console.ResetColor();
@@ -424,14 +620,27 @@ namespace NoahOnlineLibrary.Application.Services
 
                     Console.WriteLine();
 
-                    Console.WriteLine($"ID: {selectedBook.Id}");
-                    Console.WriteLine($"Name: {selectedBook.Name}");
-                    Console.WriteLine($"Page Count: {selectedBook.PageCount}");
-                    Console.WriteLine($"Author: {author?.Name} {author?.Surname}");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("=================================================================================");
+                    Console.WriteLine($"{"ID",-6}{"Book Name",-35}{"Page Count",-15}{"Author"}");
+                    Console.WriteLine("=================================================================================");
+                    Console.ResetColor();
+
+                    Console.WriteLine(
+                        $"{selectedBook.Id,-6}" +
+                        $"{selectedBook.Name,-35}" +
+                        $"{selectedBook.PageCount,-15}" +
+                        $"{author?.Name} {author?.Surname}");
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("=================================================================================");
+                    Console.ResetColor();
 
                     Console.WriteLine();
                     Console.WriteLine("1. Search Another Book");
                     Console.WriteLine("2. Back To Menu");
+
+                    Console.Write("\nSelect Option: ");
 
                     string choice = Console.ReadLine()?.Trim() ?? string.Empty;
 

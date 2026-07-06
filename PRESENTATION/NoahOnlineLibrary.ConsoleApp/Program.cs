@@ -8,22 +8,25 @@ namespace NoahOnlineLibrary.ConsoleApp
 {
     internal class Program
     {
+        private static IReservedItemService reservedItemService;
+        private static IBookService bookService;
+        private static IAuthorService authorService;
+
         static void Main(string[] args)
         {
-            var context = new AppDbContext();
+                AppDbContext context = new AppDbContext();
 
-            var authorRepo = new AuthorRepository(context);
-            var bookRepo = new BookRepository(context);
-            var reservRepo = new ReservedItemRepository(context);
+                IBookRepository bookRepository = new BookRepository(context);
+                IAuthorRepository authorRepository = new AuthorRepository(context);
+                IReservedItemRepository reservedItemRepository = new ReservedItemRepository(context);
 
-            var bookService = new BookService(bookRepo, authorRepo);
-            var authorService = new AuthorService(authorRepo, bookRepo);
-            var reservedItemService = new ReservedItemService(reservRepo, bookRepo,authorRepo);
+                IBookService bookService = new BookService(bookRepository, authorRepository, reservedItemRepository);
+                IAuthorService authorService = new AuthorService(authorRepository, bookRepository);
+                IReservedItemService reservedItemService = new ReservedItemService(reservedItemRepository, bookRepository, authorRepository);
 
-            //authorService.ShowAllAuthors();
-            reservedItemService.ReserveBook();
-            //bookService.GetBookById();
-            
+                LibraryManagementApp app = new LibraryManagementApp(bookService, authorService, reservedItemService);
+
+                app.Run();
         }
     }
 }

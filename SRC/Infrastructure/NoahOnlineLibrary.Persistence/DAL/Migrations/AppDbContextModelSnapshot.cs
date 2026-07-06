@@ -63,9 +63,6 @@ namespace NoahOnlineLibrary.Persistence.DAL.Migrations
                     b.Property<int>("PageCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReservationStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");

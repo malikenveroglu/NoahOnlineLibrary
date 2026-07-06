@@ -25,11 +25,6 @@ namespace NoahOnlineLibrary.Persistence.Configurations
             builder.Property(a => a.Gender)
                    .HasDefaultValue(Gender.Unknown);
 
-            builder.HasMany(a => a.Books)
-                   .WithOne(b => b.Author)
-                   .HasForeignKey(b => b.AuthorId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
             builder.ToTable(a =>
             {
                 a.HasCheckConstraint(

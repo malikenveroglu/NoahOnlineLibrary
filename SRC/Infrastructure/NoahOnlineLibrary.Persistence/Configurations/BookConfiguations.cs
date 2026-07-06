@@ -28,7 +28,8 @@ namespace NoahOnlineLibrary.Persistence.Cofigurations
 
             builder.HasMany(b => b.ReservedItems)
                    .WithOne(r => r.Book)
-                   .HasForeignKey(r => r.BookId);
+                   .HasForeignKey(r => r.BookId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.ToTable(b =>
             {

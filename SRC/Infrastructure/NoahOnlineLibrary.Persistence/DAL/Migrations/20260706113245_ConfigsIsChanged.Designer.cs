@@ -12,8 +12,8 @@ using NoahOnlineLibrary.Persistence.DAL;
 namespace NoahOnlineLibrary.Persistence.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260703161429_ConfigsChanged")]
-    partial class ConfigsChanged
+    [Migration("20260706113245_ConfigsIsChanged")]
+    partial class ConfigsIsChanged
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -64,9 +64,6 @@ namespace NoahOnlineLibrary.Persistence.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PageCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservationStatus")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

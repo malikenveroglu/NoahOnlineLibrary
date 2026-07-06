@@ -204,6 +204,164 @@ namespace NoahOnlineLibrary.Application.Services
             }
         }
 
+        public void DeleteAuthor()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                List<Author> authors = _authorRepository.GetAll();
+                List<Book> books = _bookRepository.GetAll();
+
+                if (authors.Count == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Library Error: There Are No Authors Yet.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Back To Menu...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                Author? selectedAuthor;
+
+                while (true)
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("========== DELETE AUTHOR ==========");
+                    Console.ResetColor();
+                    Console.WriteLine();
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("==============================");
+                    Console.WriteLine($"{"ID",-6}{"Author Name"}");
+                    Console.WriteLine("==============================");
+                    Console.ResetColor();
+
+                    foreach (Author author in authors)
+                    {
+                        Console.WriteLine($"{author.Id,-6} {author.Name} {author.Surname}");
+                        Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("===================================");
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    Console.Write("\nEnter Author Id To Delete: / Press 'M' To Back: ");
+
+                    string input = Console.ReadLine()?.Trim() ?? string.Empty;
+
+                    if (input.ToLower() == "m")
+                    {
+                        Console.Clear();
+                        return;
+                    }
+
+                    if (!int.TryParse(input, out int authorId))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\nLibrary Error: Author Id Must Be A Number.");
+                        Console.ResetColor();
+
+                        Console.WriteLine("\nPress Any Key To Try Again...");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    selectedAuthor = authors.FirstOrDefault(a => a.Id == authorId);
+
+                    if (selectedAuthor == null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("\nLibrary Error: Author Not Found.");
+                        Console.ResetColor();
+
+                        Console.WriteLine("\nPress Any Key To Try Again...");
+                        Console.ReadKey();
+                        continue;
+                    }
+
+                    break;
+                }
+
+                bool hasBooks = books.Any(book => book.AuthorId == selectedAuthor.Id);
+
+                if (hasBooks)
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Library Error:");
+                    Console.WriteLine("\nThis Author Can Not Be Deleted.");
+                    Console.WriteLine("\nDelete All Books Belonging To This Author First.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Back...");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                while (true)
+                {
+                    Console.Clear();
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("You Are About To Delete This Author:");
+                    Console.ResetColor();
+
+                    Console.WriteLine();
+                    Console.WriteLine($"ID      : {selectedAuthor.Id}");
+                    Console.WriteLine($"Name    : {selectedAuthor.Name}");
+                    Console.WriteLine($"Surname : {selectedAuthor.Surname}");
+                    Console.WriteLine($"Gender  : {selectedAuthor.Gender}");
+
+                    Console.WriteLine();
+                    Console.WriteLine("1. Confirm Delete");
+                    Console.WriteLine("2. Back To Menu");
+
+                    Console.Write("\nSelect Option: ");
+
+                    string choice = Console.ReadLine()?.Trim() ?? string.Empty;
+
+                    switch (choice)
+                    {
+                        case "1":
+
+                            _authorRepository.Delete(selectedAuthor);
+                            _authorRepository.SaveChanges();
+
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("\nAuthor Successfully Deleted.");
+                            Console.ResetColor();
+
+                            Console.WriteLine("\nPress Any Key To Continue...");
+                            Console.ReadKey();
+
+                            return;
+
+                        case "2":
+                            Console.Clear();
+                            return;
+
+                        default:
+
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("\nLibrary Error: Invalid Choice.");
+                            Console.ResetColor();
+
+                            Console.WriteLine("\nPress Any Key To Try Again...");
+                            Console.ReadKey();
+                            continue;
+                    }
+                }
+            }
+        }
+
         public void ShowAllAuthors()
         {
             Console.Clear();
@@ -229,15 +387,23 @@ namespace NoahOnlineLibrary.Application.Services
             Console.ResetColor();
             Console.WriteLine();
 
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("===================================");
+            Console.WriteLine($"{"ID",-6}{"Author Name",-15}{"Book Count"}");
+            Console.WriteLine("===================================");
+            Console.ResetColor();
+
             foreach (Author author in authors)
             {
                 int booksCount = books.Count(book => book.AuthorId == author.Id);
 
-                Console.WriteLine($"ID: {author.Id}");
-                Console.WriteLine($"Name: {author.Name}");
-                Console.WriteLine($"Books Count: {booksCount}");
-                Console.WriteLine("-----------------------------------------");
+                Console.WriteLine($"{author.Id,-9}{author.Name,-16}{author.Books?.Count}");
+                Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("===================================");
+            Console.ResetColor();
 
             while (true)
             {
@@ -279,8 +445,23 @@ namespace NoahOnlineLibrary.Application.Services
                                 continue;
                             }
 
+                            Author? selectedAuthor = authors.FirstOrDefault(a => a.Id == id);
+
+                            if (selectedAuthor == null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Library Error: Author Not Found.");
+                                Console.ResetColor();
+
+                                Console.WriteLine();
+                                Console.WriteLine("Press Any Key To Try Again...");
+                                Console.ReadKey();
+                                continue;
+                            }
+
                             ShowAuthorsBooks(id);
                             return;
+                            
                         }
 
                         Console.Clear();
@@ -290,15 +471,23 @@ namespace NoahOnlineLibrary.Application.Services
                         Console.ResetColor();
                         Console.WriteLine();
 
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("===================================");
+                        Console.WriteLine($"{"ID",-6}{"Author Name",-15}{"Book Count"}");
+                        Console.WriteLine("===================================");
+                        Console.ResetColor();
+
                         foreach (Author author in authors)
                         {
                             int booksCount = books.Count(book => book.AuthorId == author.Id);
 
-                            Console.WriteLine($"ID: {author.Id}");
-                            Console.WriteLine($"Name: {author.Name}");
-                            Console.WriteLine($"Books Count: {booksCount}");
-                            Console.WriteLine("-----------------------------------------");
+                            Console.WriteLine($"{author.Id,-9}{author.Name,-16}{author.Books?.Count}");
+                            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         }
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("===================================");
+                        Console.ResetColor();
 
                         break;
 
@@ -322,15 +511,23 @@ namespace NoahOnlineLibrary.Application.Services
                         Console.ResetColor();
                         Console.WriteLine();
 
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("===================================");
+                        Console.WriteLine($"{"ID",-6}{"Author Name",-15}{"Book Count"}");
+                        Console.WriteLine("===================================");
+                        Console.ResetColor();
+
                         foreach (Author author in authors)
                         {
                             int booksCount = books.Count(book => book.AuthorId == author.Id);
 
-                            Console.WriteLine($"ID: {author.Id}");
-                            Console.WriteLine($"Name: {author.Name}");
-                            Console.WriteLine($"Books Count: {booksCount}");
-                            Console.WriteLine("-----------------------------------------");
+                            Console.WriteLine($"{author.Id,-9}{author.Name,-16}{author.Books?.Count}");
+                            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                         }
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("===================================");
+                        Console.ResetColor();
 
                         break;
                 }
@@ -339,115 +536,158 @@ namespace NoahOnlineLibrary.Application.Services
 
         public void ShowAuthorsBooks(int authorId)
         {
-            Console.Clear();
-
             List<Author> authors = _authorRepository.GetAll();
             List<Book> books = _bookRepository.GetAll();
 
             Author? author = authors.FirstOrDefault(a => a.Id == authorId);
 
-            if (author is null)
+            if (author == null)
             {
-                while (true)
-                {
-                    Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Library Error: Author Not Found.");
+                Console.ResetColor();
 
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Library Error: Author Not Found.");
-                    Console.ResetColor();
-
-                    Console.WriteLine();
-                    Console.WriteLine("1. Try Again");
-                    Console.WriteLine("2. Back To Menu");
-
-                    string choice = Console.ReadLine()?.Trim() ?? string.Empty;
-
-                    switch (choice)
-                    {
-                        case "1":
-
-                            Console.Clear();
-
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("============== ALL AUTHORS ==============");
-                            Console.ResetColor();
-                            Console.WriteLine();
-
-                            foreach (Author item in authors)
-                            {
-                                int booksCount = books.Count(book => book.AuthorId == item.Id);
-
-                                Console.WriteLine($"ID: {item.Id}");
-                                Console.WriteLine($"Name: {item.Name}");
-                                Console.WriteLine($"Books Count: {booksCount}");
-                                Console.WriteLine("-----------------------------------------");
-                            }
-
-                            Console.WriteLine();
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.Write("Enter Author ID: ");
-                            Console.ResetColor();
-
-                            string idInput = Console.ReadLine()?.Trim() ?? string.Empty;
-
-                            if (!int.TryParse(idInput, out int newAuthorId))
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine();
-                                Console.WriteLine("Library Error: Author ID Must Be A Number.");
-                                Console.ResetColor();
-
-                                Console.WriteLine();
-                                Console.WriteLine("Press Any Key To Try Again...");
-                                Console.ReadKey();
-                                continue;
-                            }
-
-                            ShowAuthorsBooks(newAuthorId);
-                            return;
-
-                        case "2":
-                            Console.Clear();
-                            return;
-
-                        default:
-
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine();
-                            Console.WriteLine("Library Error: Invalid Choice.");
-                            Console.ResetColor();
-
-                            Console.WriteLine();
-                            Console.WriteLine("Press Any Key To Try Again...");
-                            Console.ReadKey();
-                            break;
-                    }
-                }
+                Console.WriteLine("\nPress Any Key...");
+                Console.ReadKey();
+                return;
             }
 
             List<Book> authorBooks = books
-                .Where(book => book.AuthorId == author.Id)
+                .Where(b => b.AuthorId == author.Id)
                 .ToList();
 
+            Console.Clear();
+
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"=========== {author.Name}'S BOOKS ===========");
+            Console.WriteLine($"========== {author.Name} {author.Surname}'S BOOKS ==========");
             Console.ResetColor();
             Console.WriteLine();
 
             if (authorBooks.Count == 0)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("This Author Has No Books Yet.");
+                Console.WriteLine("\nThis Author Has No Books Yet.");
                 Console.ResetColor();
 
-                Console.WriteLine();
-                Console.WriteLine("Press Any Key To Back To Menu...");
+                Console.WriteLine("\nPress Any Key To Back...");
                 Console.ReadKey();
-                Console.Clear();
                 return;
             }
-            else
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{"ID",-10}{"Book Name",-20}{"Page Count"}");
+            Console.WriteLine("========================================");
+            Console.ResetColor();
+
+            foreach (Book book in authorBooks)
             {
+                Console.WriteLine($"{book.Id,-10}{book.Name,-20}{book.PageCount}");
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("========================================");
+            Console.ResetColor();
+
+            Console.WriteLine();
+            Console.WriteLine("Press Any Key To Back...");
+            Console.ReadKey();
+        }
+
+        public void ShowAuthorsBooks()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                List<Author> authors = _authorRepository.GetAll();
+                List<Book> books = _bookRepository.GetAll();
+
+                if (authors.Count == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Library Error: There Are No Authors Yet.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Back To Menu...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("============== ALL AUTHORS ==============");
+                Console.ResetColor();
+                Console.WriteLine();
+
+                foreach (Author item in authors)
+                {
+                    int booksCount = books.Count(book => book.AuthorId == item.Id);
+
+                    Console.WriteLine($"ID: {item.Id}");
+                    Console.WriteLine($"Name: {item.Name}");
+                    Console.WriteLine($"Books Count: {booksCount}");
+                    Console.WriteLine("-----------------------------------------");
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine();
+                Console.WriteLine("Enter Author ID");
+                Console.WriteLine("Press 'M' To Back To Menu:");
+                Console.ResetColor();
+
+                string input = Console.ReadLine()?.Trim() ?? string.Empty;
+
+                if (input.ToLower() == "m")
+                {
+                    Console.Clear();
+                    return;
+                }
+
+                if (!int.TryParse(input, out int authorId))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nLibrary Error: Author ID Must Be A Number.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Try Again...");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                Author? author = authors.FirstOrDefault(a => a.Id == authorId);
+
+                if (author == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nLibrary Error: Author Not Found.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Try Again...");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                List<Book> authorBooks = books
+                    .Where(book => book.AuthorId == author.Id)
+                    .ToList();
+
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"=========== {author.Name.ToUpper()}'S BOOKS ===========");
+                Console.ResetColor();
+                Console.WriteLine();
+
+                if (authorBooks.Count == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("This Author Has No Books Yet.");
+                    Console.ResetColor();
+
+                    Console.WriteLine("\nPress Any Key To Back...");
+                    Console.ReadKey();
+                    continue;
+                }
+
                 foreach (Book book in authorBooks)
                 {
                     Console.WriteLine($"ID: {book.Id}");
@@ -455,12 +695,11 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.WriteLine($"Page Count: {book.PageCount}");
                     Console.WriteLine("-----------------------------------------");
                 }
-            }
 
-            Console.WriteLine();
-            Console.WriteLine("Press Any Key To Back...");
-            Console.ReadKey();
-            Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("Press Any Key To Back...");
+                Console.ReadKey();
+            }
         }
     }
 }
