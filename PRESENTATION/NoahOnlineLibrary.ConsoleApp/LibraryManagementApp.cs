@@ -1,6 +1,7 @@
 ﻿using NoahOnlineLibrary.Application.Interfaces.IRepository;
 using NoahOnlineLibrary.Application.Interfaces.IServices;
 using NoahOnlineLibrary.Application.Services;
+using NoahOnlineLibrary.ConsoleApp.UI;
 using NoahOnlineLibrary.Domain.Entities;
 using NoahOnlineLibrary.Persistence.Repository;
 using System;
@@ -16,6 +17,7 @@ namespace NoahOnlineLibrary.ConsoleApp
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
         private readonly IReservedItemService _reservedItemService;
+        private AnimationService _animationService = new();
 
         public LibraryManagementApp(IBookService bookService,IAuthorService authorService,IReservedItemService reservedItemService)
         {
@@ -26,33 +28,18 @@ namespace NoahOnlineLibrary.ConsoleApp
 
         public void Run()
         {
+            _animationService.EnterTheLibrary();
+            ConsoleTheme.Apply();
+
             while (true)
             {
                 Console.Clear();
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("=========================================");
-                Console.WriteLine("         NOAH ONLINE LIBRARY");
-                Console.WriteLine("=========================================");
-                Console.ResetColor();
+                MainMenuUI.Draw();
 
-                Console.WriteLine();
-                Console.WriteLine("1. Book Management");
-                Console.WriteLine();
-                Console.WriteLine("2. Author Management");
-                Console.WriteLine();
-                Console.WriteLine("3. Reservation Management");
-                Console.WriteLine();
-                Console.WriteLine("0. Exit");
+                Console.SetCursorPosition(84, 19);
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine();
-                Console.WriteLine("=========================================");
-                Console.ResetColor();
-
-                Console.Write("\nSelect Option: ");
-
-                string choice = Console.ReadLine()?.Trim() ?? string.Empty;
+                string choice = Console.ReadLine()?.Trim() ?? "";
 
                 switch (choice)
                 {
@@ -70,14 +57,20 @@ namespace NoahOnlineLibrary.ConsoleApp
 
                     case "0":
                         Console.Clear();
+                        _animationService.LeaveTheLibrary();
                         return;
 
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\nLibrary Error: Invalid Choice.");
+
+                        Console.SetCursorPosition(68, 22);
+                        Console.Write("Library Error: Invalid Choice.");
+
+                        Console.SetCursorPosition(68, 24);
+                        Console.Write("Press Any Key...");
+
                         Console.ResetColor();
 
-                        Console.WriteLine("\nPress Any Key To Try Again...");
                         Console.ReadKey();
                         break;
                 }
