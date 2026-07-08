@@ -31,7 +31,7 @@ namespace NoahOnlineLibrary.Application.Services
                 while (true)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Press Enter To Type Author Name / Press 'M' To Back To Menu:");
+                    Console.WriteLine("Type Author Name / Press 'M' To Back To Menu:");
                     Console.ResetColor();
 
                     string authorName = Console.ReadLine()?.Trim() ?? string.Empty;
@@ -67,7 +67,7 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.Clear();
 
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Press Enter To Type Author Surname (Don't Have To) / Press 'M' To Back To Menu:");
+                    Console.WriteLine("Type Author Surname (Don't Have To) / Press 'M' To Back To Menu:");
                     Console.ResetColor();
 
                     string authorSurname = Console.ReadLine()?.Trim() ?? string.Empty;

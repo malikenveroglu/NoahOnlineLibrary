@@ -8,9 +8,9 @@ namespace NoahOnlineLibrary.ConsoleApp
 {
     internal class Program
     {
-        private static IReservedItemService reservedItemService;
-        private static IBookService bookService;
-        private static IAuthorService authorService;
+        //private static IReservedItemService reservedItemService;
+        //private static IBookService bookService;
+        //private static IAuthorService authorService;
 
         static void Main(string[] args)
         {

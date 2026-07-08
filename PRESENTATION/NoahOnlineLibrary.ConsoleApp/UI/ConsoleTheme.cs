@@ -10,7 +10,7 @@ namespace NoahOnlineLibrary.ConsoleApp.UI
     {
         public static void Apply()
         {
-            Console.Title = "NOAH ONLINE LIBRARY";
+            Console.Title = "NOAH'S ONLINE LIBRARY";
 
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 

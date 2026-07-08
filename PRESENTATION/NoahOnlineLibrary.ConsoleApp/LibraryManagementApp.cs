@@ -17,7 +17,7 @@ namespace NoahOnlineLibrary.ConsoleApp
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
         private readonly IReservedItemService _reservedItemService;
-        private AnimationService _animationService = new();
+        private readonly AnimationService _animationService = new();
 
         public LibraryManagementApp(IBookService bookService,IAuthorService authorService,IReservedItemService reservedItemService)
         {
@@ -85,7 +85,7 @@ namespace NoahOnlineLibrary.ConsoleApp
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("=========================================");
-                Console.WriteLine("         BOOK MANAGEMENT");
+                Console.WriteLine("             BOOK MANAGEMENT");
                 Console.WriteLine("=========================================");
                 Console.ResetColor();
 
@@ -144,7 +144,7 @@ namespace NoahOnlineLibrary.ConsoleApp
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("=========================================");
-                Console.WriteLine("        AUTHOR MANAGEMENT");
+                Console.WriteLine("            AUTHOR MANAGEMENT");
                 Console.WriteLine("=========================================");
                 Console.ResetColor();
 
@@ -203,7 +203,7 @@ namespace NoahOnlineLibrary.ConsoleApp
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("=========================================");
-                Console.WriteLine("     RESERVATION MANAGEMENT");
+                Console.WriteLine("         RESERVATION MANAGEMENT");
                 Console.WriteLine("=========================================");
                 Console.ResetColor();
 

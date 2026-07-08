@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NoahOnlineLibrary.Persistence.DAL
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(AppDbContext? context)
         {

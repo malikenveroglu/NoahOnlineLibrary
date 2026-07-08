@@ -37,7 +37,7 @@ namespace NoahOnlineLibrary.Application.Services
                 while (true)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Press Enter To Type Book Name / Press 'M' To Back To Menu:");
+                    Console.WriteLine("Type Book Name / Press 'M' To Back To Menu:");
                     Console.ResetColor();
 
                     string bookName = Console.ReadLine()?.Trim() ?? string.Empty;
@@ -82,7 +82,7 @@ namespace NoahOnlineLibrary.Application.Services
                         return;
                     }
 
-                    if (!int.TryParse(pageInput, out int pages) || pages <= 0)
+                    if (!int.TryParse(pageInput, out int pages) || pages < 0)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Library Error: Page Count Must Be A Positive Or A Number.");

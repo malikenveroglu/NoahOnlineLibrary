@@ -128,6 +128,7 @@ namespace NoahOnlineLibrary.Application.Services
                     }
 
                     List<ReservedItem> _reservedItems = _reservedItemRepository.GetAll();
+
                     int activeReservationCount = _reservedItems.Count(r => 
                         r.FinCode == input &&
                         (r.Status == Status.Confirmed || 
@@ -256,8 +257,7 @@ namespace NoahOnlineLibrary.Application.Services
 
                 while (true)
                 {
-                    List<ReservedItem> conflictingReservations = reservedItems
-                        .Where(r =>
+                    List<ReservedItem> conflictingReservations = reservedItems.Where(r =>
                             r.BookId == selectedBook.Id &&
                             r.Status != Status.Completed &&
                             r.Status != Status.Canceled &&
@@ -279,25 +279,26 @@ namespace NoahOnlineLibrary.Application.Services
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("Current Reservation Dates:");
                     Console.ResetColor();
+
                     foreach (ReservedItem reservation in conflictingReservations)
                     {
-                        Console.Write($"{reservation.StartDate:dd.MM.yyyy} - {reservation.EndDate:dd.MM.yyyy} (");
+                        Console.Write($"{reservation.StartDate:dd.MM.yyyy} - {reservation.EndDate:dd.MM.yyyy}");
 
-                        switch (reservation.Status)
-                        {
-                            case Status.Confirmed:
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                break;
+                        //switch (reservation.Status)
+                        //{
+                        //    case Status.Confirmed:
+                        //        Console.ForegroundColor = ConsoleColor.Yellow;
+                        //        break;
 
-                            case Status.Started:
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                break;
-                        }
+                        //    case Status.Started:
+                        //        Console.ForegroundColor = ConsoleColor.Green;
+                        //        break;
+                        //}
 
-                        Console.Write(reservation.Status);
-                        Console.ResetColor();
+                        //Console.Write(reservation.Status);
+                        //Console.ResetColor();
 
-                        Console.WriteLine(")");
+                        Console.WriteLine(" ");
                     }
 
                     Console.WriteLine();

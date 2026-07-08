@@ -12,7 +12,7 @@ namespace NoahOnlineLibrary.Application.Interfaces.IRepository
     {
         void Add(T entity);
 
-        void Delete(T entity);   
+        void Delete(T entity);
 
         void Update(T entity);
 
